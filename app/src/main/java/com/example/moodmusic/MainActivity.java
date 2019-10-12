@@ -5,24 +5,31 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+//imports for remote
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 
+//spotify calls
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyCallback;
 import kaaes.spotify.webapi.android.SpotifyError;
 import kaaes.spotify.webapi.android.SpotifyService;
 
+//imports to play track
+import com.spotify.protocol.client.Subscription;
+import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 
 import android.util.Log;
 
+//utilities
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//wrapper functions
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
