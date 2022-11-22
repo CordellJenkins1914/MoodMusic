@@ -9,14 +9,6 @@ const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECTURI;
 
-
-const encodeFormData = (data) => {
-    return Object.keys(data)
-      .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
-      .join('&');
-  }
-
-
   const scopes = [
     `user-modify-playback-state
     user-read-playback-state
@@ -25,7 +17,11 @@ const encodeFormData = (data) => {
     user-library-read
     user-top-read
     playlist-read-private
-    playlist-modify-public`
+    playlist-modify-public
+    playlist-modify-private
+    streaming
+    user-read-email
+    user-read-private`
 ];
 
     const state = generateRandomString(16);
@@ -64,13 +60,6 @@ const encodeFormData = (data) => {
 
       spotifyApi.setAccessToken(access_token);
       spotifyApi.setRefreshToken(refresh_token);
-
-      console.log('access_token:', access_token);
-      console.log('refresh_token:', refresh_token);
-
-      console.log(
-        `Sucessfully retreived access token. Expires in ${expires_in} s.`
-      );
       
       const queryParams = querystring.stringify({
         access_token,
@@ -83,9 +72,6 @@ const encodeFormData = (data) => {
       setInterval(async () => {
         const data = await spotifyApi.refreshAccessToken();
         const access_token = data.body['access_token'];
-
-        console.log('The access token has been refreshed!');
-        console.log('access_token:', access_token);
         spotifyApi.setAccessToken(access_token);
         
       }, expires_in / 2 * 1000);
@@ -107,6 +93,7 @@ router.get('/user', async (req, res) => {
 });
 
 router.get('/refresh_token', (req, res) => {
+
   const access_token  = spotifyApi.getAccessToken();
 
   const responseData = {
@@ -123,39 +110,35 @@ router.get('/playlist', async (req, res) => {
 
     let playlistId;
     let trackUris;
+    const mood = req.query.mood || "happy";
+   
 
     // create playlist
-
     spotifyApi
-    .getMySavedTracks({
+    .getMySavedTracks({limit: 50
     })
         .then(async function(data) {
-            console.log('Done!');
-            let size = data.body.total;
+            let size = 50 > data.body.total ? data.body.total : 50;
             let tracks = data.body.items.map((item) => item.track);
-            trackUris = await buildTracks(spotifyApi, tracks, size);
+            trackUris = await buildTracks(spotifyApi, tracks, size,mood);
             
             return spotifyApi
-            .createPlaylist('Mood playlist', { 'description': 'Mood baed playlist', 'public': true })
+            .createPlaylist(`${mood} playlist`, { 'description': 'Mood based playlist', 'public': true })
             .then(async function(data) {
-                console.log('Created playlist!');
                 playlistId = data.body['id'];
-                return  spotifyApi.getMySavedTracks({
-                })
-                .then(async function(data) {
-                    console.log('Done!');
-                
-                })
-                .then(async function(data) {
-                    console.log(playlistId);
-                    spotifyApi.addTracksToPlaylist(playlistId, trackUris)
+                return  spotifyApi.addTracksToPlaylist(playlistId, trackUris)
                     .then(function(data) {
-                        console.log("added songs to playlist");
+                        const responseData = {
+                          playlistId : playlistId,
+                          trackUris : trackUris,
+                      
+                        }
+                        const jsonContent = JSON.stringify(responseData);
+                        res.send(jsonContent);
                     }) 
                     
                 })
         })
-    })
     .catch(function(err) {
         console.log('Something went wrong!', err);
     });

@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "@material-ui/styles": "^4.11.5",
+    "axios": "^1.1.3",
     "cookie-parser": "^1.4.6",
     "cookie-session": "^2.0.0",
     "cors": "^2.8.5",
@@ -14,6 +16,7 @@
     "client": "cd client && npm start",
     "postinstall": "cd client && npm install"
   },
+  "proxy": "http://localhost:3000",
   "type": "module",
   "devDependencies": {
     "concurrently": "^7.5.0",
