@@ -1,45 +1,101 @@
 import { useState, useEffect } from 'react';
-import { accessToken, logout, getCurrentUserProfile } from './spotify.js';
-import { catchErrors } from './utils.js';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from 'react-router-dom';
+import { accessToken, logout } from './spotify.js';
+import { Login, Profile, Playlists, Playlist, Mood } from './pages';
+import { GlobalStyle } from './styles';
+import styled from 'styled-components/macro';
 
-import './App.css';
 
 function App() {
+
+  const StyledLogoutButton = styled.button`
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-md);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: rgba(0,0,0,.7);
+  color: var(--white);
+  font-size: var(--fz-sm);
+  font-weight: 700;
+  border-radius: var(--border-radius-pill);
+  z-index: 10;
+  @media (min-width: 768px) {
+    right: var(--spacing-lg);
+  }
+`;
+
+const StyledHomeButton = styled.button`
+color: var(--white);
+font-size: 1em;
+margin: 1em;
+padding: 0.25em 1em;
+border: 2px solid black;
+border-radius: 3px;
+display: block;
+`;
+const StyledMoodButton = styled.button`
+color: var(--white);
+font-size: 1em;
+margin: 1em;
+padding: .025em 1em;
+border: 2px solid black;
+border-radius: 3px;
+display: block;
+`
+
+  function ScrollToTop() {
+    const { pathname } = useLocation();
+  
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, [pathname]);
+  
+    return null;
+  }
+
   const [token, setToken] = useState(null);
-  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     setToken(accessToken);
-    
-    if(accessToken){
-      const fetchData = async () => {
-          const data  = await getCurrentUserProfile();
-          setProfile(data.body);
-        } 
-      catchErrors(fetchData());
-    }   
   }, []);
+
+  function home() {
+    window.location.href = "http://localhost:3000/";
+  }
+  function mood() {
+    window.location.href = "http://localhost:3000/mood";
+  }
 
   return (
     <div className="App">
+      <GlobalStyle />
+
       <header className="App-header">
         {!token ? (
-          <a className="App-link" href="http://localhost:8888/login">
-            Log in to Spotify
-          </a>
+          <Login />
         ) : (
           <>
-            <button onClick={logout}>Log Out</button>
-
-            {profile && (
-              <div>
-                <h1>{profile.display_name}</h1>
-                <p>{profile.followers.total} Followers</p>
-                {profile.images.length && profile.images[0].url && (
-                  <img src={profile.images[0].url} alt="Avatar"/>
-                )}
-              </div>
-            )}
+          <StyledLogoutButton onClick={logout}>Log Out</StyledLogoutButton>
+          <StyledHomeButton onClick={home}> Home</StyledHomeButton>
+          <StyledMoodButton onClick={mood}>Mood</StyledMoodButton>
+          <Router>
+            <ScrollToTop />
+            <Routes>
+            <Route path="/mood" element={<Mood />}t>
+              </Route>
+              <Route path="/playlists/:id" element={<Playlist />}>
+              </Route>
+              <Route path="/playlists" element={<Playlists />}t>
+              </Route>
+              <Route path="/" element={<Profile />}>
+              </Route>
+            </Routes>
+          </Router>
           </>
         )}
       </header>

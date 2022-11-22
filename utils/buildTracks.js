@@ -1,16 +1,17 @@
-async function buildTracks (spotifyApi, tracks, size){
+async function buildTracks (spotifyApi, tracks, size,userMood){
 
     let trackUris = [];   
     let mood;
     try{
         for(let i = 0; i < size; i++){
-            spotifyApi.getAudioFeaturesForTrack(tracks[i].id)
+			console.log(tracks[i].name)
+            await spotifyApi.getAudioFeaturesForTrack(tracks[i].id)
             .then(async function(data) {
                 mood = await findMood(data.body);
-                if(mood == "angry") {
+                if(mood === userMood) {
                     trackUris.push(data.body.uri);
-                    console.log(data.body);
-                    console.log(mood);
+					console.log(data.body)
+					console.log(mood)
                 }
             })
             .catch(function(err) {
@@ -29,28 +30,45 @@ async function findMood(attributes) {
     let sentiment = 0;
     let mood;
 
+	//valence
     if (attributes.valence >= 0.5) {
 		sentiment++
 	} else if (attributes.valence < .3) {
-		sentiment = sentiment - 4
-	} else {
+		sentiment = sentiment - 10
+	} 
+	else if (attributes.valence >= .7) {
+		sentiment = sentiment + 10
+	}
+	else {
 		sentiment--
 	}
-
+	//energy
 	if (attributes.energy >= 0.5) {
 		intensity = intensity + 2
-	} else {
+	} else if (attributes.energy >= .7){
+		intensity = intensity + 2
+	}
+	else if(attributes.energy <= .3 ){
+		intensity = intensity - 2
+	}
+	else{
 		intensity = intensity - 2
 	}
 
-	if (attributes.tempo >= 130) {
-		intensity++
-		sentiment++
-	} else {
+	//tempo
+	if (attributes.tempo >= 120) {
+		sentiment = sentiment + 2
+		intensity = intensity + 2
+	} else if(attributes.tempo < 120 && attributes.tempo >= 100){
 		intensity--
 		sentiment--
 	}
+	else{
+		sentiment = sentiment - 2
+		intensity = intensity - 2
+	}
 
+	//danceability
 	if (attributes.danceability >= 0.5) {
 		intensity++
 		sentiment++
@@ -58,9 +76,40 @@ async function findMood(attributes) {
 		intensity--
 		sentiment--
 	}
+	if (attributes.danceability >= .7) {
+		intensity++
+		sentiment++
+	}
+	
+	if (attributes.danceability < .3) {
+		intensity--
+		sentiment--
+	}
+	
+	//mode
+	if(attributes.mode === 0){
+		sentiment--
+	} else{
+		sentiment++
+	}
 
+	//loudness
+	if (attributes.loudness <= -7.5) {
+		intensity = intensity - 2
+	}
+	if (attributes.loudness > -7.5) {
+		intensity = intensity + 2
+	}
+	if (attributes.loudness <= -10.0) {
+		intensity = intensity - 1
+	}
+	if (attributes.loudness > -5.0) {
+		intensity = intensity + 2
+	}
+
+	// calculate
 	if (intensity >= 0) {
-		if (sentiment >= 0) {
+		if (sentiment > 0) {
 			mood = "excited"
 		} else {
 			mood = "angry"
