@@ -84,10 +84,10 @@ const Playlist = () => {
               ): (
                 <Loader />
               )}
-                         
+            <Player accessToken={accessToken} playlistUri={playlist.uri} />   
             </SectionWrapper>
             <div>
-                <Player accessToken={accessToken} playlistUri={playlist.uri} />  
+                
             </div>
           </main>
         </>
