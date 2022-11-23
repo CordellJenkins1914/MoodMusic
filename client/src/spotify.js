@@ -1,12 +1,5 @@
 import axios from "axios";
 import SpotifyWebApi from "spotify-web-api-node";
-import querystring from "querystring";
-<<<<<<< HEAD
-
-const FRONTEND_URI = process.env.REACT_APP_FRONTEND_URI;
-const SERVER_URI = process.env.REACT_APP_SERVER_URI;
-=======
->>>>>>> 1f842f851198f114addb81958673df0087a11f42
 
 var spotifyApi = new SpotifyWebApi({
 });
@@ -67,13 +60,6 @@ const getAccessToken = () => {
     window.localStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now());
 
     spotifyApi.setAccessToken(queryParams[LOCALSTORAGE_KEYS.accessToken]);
-
-<<<<<<< HEAD
-    window.location = window.location.origin;
-=======
-    window.location.href = "http://localhost:3000/";
-
->>>>>>> 1f842f851198f114addb81958673df0087a11f42
     // Return access token from query params
     return queryParams[LOCALSTORAGE_KEYS.accessToken];
   }
@@ -98,26 +84,6 @@ const getAccessToken = () => {
   return (millisecondsElapsed / 1000) > Number(expireTime);
 };
 
-const getMoodPlaylist = async (mood) => {
-  try {
-    const queryParams = querystring.stringify({
-      mood
-    });
-<<<<<<< HEAD
-    const { data } = await axios.get(`${SERVER_URI}/playlist?${queryParams}`);
-    let playlistId = data.playlistId;
-    console.log(playlistId)
-    window.location = `${FRONTEND_URI}/playlists/${playlistId}`;
-=======
-    const { data } = await axios.get(`http://localhost:8888/playlist?${queryParams}`);
-    let playlistId = data.playlistId;
-    console.log(playlistId)
-    window.location.href = `http://localhost:3000/playlists/${playlistId}`;
->>>>>>> 1f842f851198f114addb81958673df0087a11f42
-  } catch (e) {
-    console.error(e);
-  }
-};
 
 /**
  * Use the refresh token in localStorage to hit the /refresh_token endpoint
@@ -129,18 +95,14 @@ const getMoodPlaylist = async (mood) => {
     // Use `/refresh_token` endpoint from our Node app
     const { data } = await axios.get(`${SERVER_URI}/refresh_token`);
 
-    if(data.access_token === "undefined"){
-      this.logout();
-    }
-    else{
+    console.log(data.access_token);
 
-      // Update localStorage values
-      window.localStorage.setItem(LOCALSTORAGE_KEYS.accessToken, data.access_token);
-      window.localStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now());
-      spotifyApi.setAccessToken(data.access_token);
-      // Reload the page for localStorage updates to be reflected
-      window.location.reload();
-    }
+    // Update localStorage values
+    window.localStorage.setItem(LOCALSTORAGE_KEYS.accessToken, data.access_token);
+    window.localStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now());
+    spotifyApi.setAccessToken(data.access_token);
+    // Reload the page for localStorage updates to be reflected
+    window.location.reload();
 
   } catch (e) {
     console.error(e);
@@ -163,13 +125,6 @@ const getUserPlaylist = (id) => spotifyApi.getPlaylist(id).then(
   }
 );
 
-const getCurrentUserPlaylists = () => spotifyApi.getUserPlaylists().then(
-  async function(data) {
-    return data;
-  }, function(err) {
-    console.log('Something went wrong!', err);
-  }
-);
 
 export const accessToken = getAccessToken();
 /**
@@ -185,7 +140,4 @@ export const accessToken = getAccessToken();
   window.location = window.location.origin;
 };
 
-export const getPlaylists = () => getCurrentUserPlaylists();
-export const getPlaylist = (id) => getUserPlaylist(id);
 export const getCurrentUserProfile = () => getUser();
-export const getMood = (mood) => getMoodPlaylist(mood);
