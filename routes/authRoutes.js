@@ -34,6 +34,7 @@ const FRONTEND_URI = process.env.FRONTEND_URI;
     });
 
     let authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
+    console.log(authorizeURL);
 
 
     router.get('/login', (req, res) => {

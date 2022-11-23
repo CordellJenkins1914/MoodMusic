@@ -10,6 +10,7 @@ import { Login, Profile, Playlists, Playlist, Mood } from './pages';
 import { GlobalStyle } from './styles';
 import styled from 'styled-components/macro';
 
+const FRONTEND_URI = process.env.REACT_APP_FRONTEND_URI;
 
 function App() {
 
@@ -65,10 +66,10 @@ display: block;
   }, []);
 
   function home() {
-    window.location.href = "http://localhost:3000/";
+    window.location.href = {FRONTEND_URI};
   }
   function mood() {
-    window.location.href = "http://localhost:3000/mood";
+    window.location.href = `${FRONTEND_URI}/mood`;
   }
 
   return (

@@ -63,6 +63,8 @@ const getAccessToken = () => {
     window.localStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now());
 
     spotifyApi.setAccessToken(queryParams[LOCALSTORAGE_KEYS.accessToken]);
+
+    window.location = window.location.origin;
     // Return access token from query params
     return queryParams[LOCALSTORAGE_KEYS.accessToken];
   }
