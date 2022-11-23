@@ -1,6 +1,9 @@
 import styled from 'styled-components/macro';
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1f842f851198f114addb81958673df0087a11f42
 const StyledLoginContainer = styled.main`
   display: flex;
   flex-direction: column;
@@ -24,7 +27,10 @@ const StyledLoginButton = styled.a`
     filter: brightness(1.1);
   }
 `;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1f842f851198f114addb81958673df0087a11f42
 const LOGIN_URI =
   process.env.NODE_ENV !== 'production'
     ? 'http://localhost:8888/login'

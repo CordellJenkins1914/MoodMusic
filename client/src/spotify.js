@@ -1,9 +1,12 @@
 import axios from "axios";
 import SpotifyWebApi from "spotify-web-api-node";
 import querystring from "querystring";
+<<<<<<< HEAD
 
 const FRONTEND_URI = process.env.REACT_APP_FRONTEND_URI;
 const SERVER_URI = process.env.REACT_APP_SERVER_URI;
+=======
+>>>>>>> 1f842f851198f114addb81958673df0087a11f42
 
 var spotifyApi = new SpotifyWebApi({
 });
@@ -65,7 +68,12 @@ const getAccessToken = () => {
 
     spotifyApi.setAccessToken(queryParams[LOCALSTORAGE_KEYS.accessToken]);
 
+<<<<<<< HEAD
     window.location = window.location.origin;
+=======
+    window.location.href = "http://localhost:3000/";
+
+>>>>>>> 1f842f851198f114addb81958673df0087a11f42
     // Return access token from query params
     return queryParams[LOCALSTORAGE_KEYS.accessToken];
   }
@@ -95,10 +103,17 @@ const getMoodPlaylist = async (mood) => {
     const queryParams = querystring.stringify({
       mood
     });
+<<<<<<< HEAD
     const { data } = await axios.get(`${SERVER_URI}/playlist?${queryParams}`);
     let playlistId = data.playlistId;
     console.log(playlistId)
     window.location = `${FRONTEND_URI}/playlists/${playlistId}`;
+=======
+    const { data } = await axios.get(`http://localhost:8888/playlist?${queryParams}`);
+    let playlistId = data.playlistId;
+    console.log(playlistId)
+    window.location.href = `http://localhost:3000/playlists/${playlistId}`;
+>>>>>>> 1f842f851198f114addb81958673df0087a11f42
   } catch (e) {
     console.error(e);
   }
