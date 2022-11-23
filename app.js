@@ -5,10 +5,14 @@ import AuthRoutes from './routes/authRoutes.js';
 import cookieParser from 'cookie-parser';
 import cookieSession from "cookie-session";
 import generateRandomString from "./utils/generateRandomString.js";
+import path from 'path';
 
 const PORT = process.env.PORT || 8888;
 const application = express();
-
+if (process.env.NODE_ENV === 'production') {
+	application.use(express.static('client/build'))
+}
+// Priority serve any static files.
 application.use(cookieSession({
 	name:'session',
 	keys: [generateRandomString],
@@ -26,11 +30,11 @@ application.use(cors({
 }));
 application.use('/', cors(), AuthRoutes);
 
-
+application.get('*', (req, res) => {
+	res.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
+  });
 application.listen(PORT, () => {
 	console.log(`Server started on port ${PORT}`);
 });
 
-if (process.env.NODE_ENV === 'production') {
-	application.use(express.static('client/build'))
-}
+

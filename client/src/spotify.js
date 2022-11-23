@@ -2,6 +2,9 @@ import axios from "axios";
 import SpotifyWebApi from "spotify-web-api-node";
 import querystring from "querystring";
 
+const FRONTEND_URI = process.env.REACT_APP_FRONTEND_URI;
+const SERVER_URI = process.env.REACT_APP_SERVER_URI;
+
 var spotifyApi = new SpotifyWebApi({
 });
 
@@ -62,8 +65,7 @@ const getAccessToken = () => {
 
     spotifyApi.setAccessToken(queryParams[LOCALSTORAGE_KEYS.accessToken]);
 
-    window.location.href = "http://localhost:3000/";
-
+    window.location = window.location.origin;
     // Return access token from query params
     return queryParams[LOCALSTORAGE_KEYS.accessToken];
   }
@@ -93,10 +95,10 @@ const getMoodPlaylist = async (mood) => {
     const queryParams = querystring.stringify({
       mood
     });
-    const { data } = await axios.get(`http://localhost:8888/playlist?${queryParams}`);
+    const { data } = await axios.get(`${SERVER_URI}/playlist?${queryParams}`);
     let playlistId = data.playlistId;
     console.log(playlistId)
-    window.location.href = `http://localhost:3000/playlists/${playlistId}`;
+    window.location = `${FRONTEND_URI}/playlists/${playlistId}`;
   } catch (e) {
     console.error(e);
   }
@@ -110,7 +112,7 @@ const getMoodPlaylist = async (mood) => {
  const refreshToken = async () => {
   try {
     // Use `/refresh_token` endpoint from our Node app
-    const { data } = await axios.get("http://localhost:8888/refresh_token");
+    const { data } = await axios.get(`${SERVER_URI}/refresh_token`);
 
     if(data.access_token === "undefined"){
       this.logout();
@@ -131,6 +133,7 @@ const getMoodPlaylist = async (mood) => {
 };
 const getUser = () => spotifyApi.getMe().then(
   async function(data) {
+    console.log(FRONTEND_URI);
       return data;
     }, function(err) {
     console.log('Something went wrong!', err);

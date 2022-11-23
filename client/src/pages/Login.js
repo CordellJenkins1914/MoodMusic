@@ -1,5 +1,6 @@
 import styled from 'styled-components/macro';
 
+
 const StyledLoginContainer = styled.main`
   display: flex;
   flex-direction: column;
@@ -24,9 +25,14 @@ const StyledLoginButton = styled.a`
   }
 `;
 
+const LOGIN_URI =
+  process.env.NODE_ENV !== 'production'
+    ? 'http://localhost:8888/login'
+    : 'https://mood-music-app.herokuapp.com/login';
+
 const Login = () => (
   <StyledLoginContainer>
-    <StyledLoginButton href="http://localhost:8888/login">
+    <StyledLoginButton href={LOGIN_URI}>
       Log in to Spotify
     </StyledLoginButton>
   </StyledLoginContainer>
