@@ -139,7 +139,7 @@ const getMoodPlaylist = async (mood) => {
     wait(1000);
     let playlistId = data.playlistId;
     console.log(playlistId);
-    window.location = `${FRONTEND_URI}/playlists/${playlistId}`;
+    wait(1000);
     window.location = `${FRONTEND_URI}/playlists/${playlistId}`;
   } catch (e) {
     console.error(e);
