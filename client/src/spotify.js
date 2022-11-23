@@ -137,8 +137,8 @@ const getMoodPlaylist = async (mood) => {
     });
     const { data } = await axios.get(`${SERVER_URI}/playlist?${queryParams}`);
     let playlistId = data.playlistId;
-    console.log(playlistId)
-    window.location.href = `${FRONTEND_URI}/playlists/${playlistId}`;
+    console.log(playlistId);
+    window.location = `${FRONTEND_URI}/playlists/${playlistId}`;
   } catch (e) {
     console.error(e);
   }
