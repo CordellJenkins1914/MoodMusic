@@ -22,6 +22,7 @@ const Playlist = () => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await getPlaylist(id);
+      console.log(id);
       setPlaylist(data.body);
       setTracksData(data.body.tracks);
     };
