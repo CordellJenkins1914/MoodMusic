@@ -4,6 +4,8 @@ import SpotifyWebApi from "spotify-web-api-node";
 var spotifyApi = new SpotifyWebApi({
 });
 
+const FRONTEND_URI = process.env.REACT_APP_FRONTEND_URI;
+const SERVER_URI = process.env.REACT_APP_SERVER_URI;
 
 // Map for localStorage keys
 const LOCALSTORAGE_KEYS = {
