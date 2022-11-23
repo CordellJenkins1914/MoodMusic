@@ -66,7 +66,7 @@ display: block;
   }, []);
 
   function home() {
-    window.location.href = {FRONTEND_URI};
+    window.location.href = `${FRONTEND_URI}`;
   }
   function mood() {
     window.location.href = `${FRONTEND_URI}/mood`;
