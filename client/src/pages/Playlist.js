@@ -24,7 +24,7 @@ const Playlist = () => {
       const data = await getPlaylist(id);
       console.log(id);
       console.log(data.body.tracks)
-      console.log(data.body.name)
+      console.log(data.body.tracks.total)
       setPlaylist(data.body);
       setTracksData(data.body.tracks);
     };
@@ -56,7 +56,7 @@ const Playlist = () => {
 
   return (
     <>
-      {playlist && (
+      {playlist && playlist.tracks.total ? (
         <>
           <StyledHeader>
             <div className="header__inner">
@@ -91,6 +91,8 @@ const Playlist = () => {
             </div>
           </main>
         </>
+      ) : (
+        <p className="empty-notice">No playlist available</p>
       )}
     </>
   )
