@@ -24,7 +24,7 @@ const Playlist = () => {
       const data = await getPlaylist(id);
       console.log(id);
       console.log(data.body.tracks)
-      console.log(data.body.tracks.total)
+      console.log(data.body)
       setPlaylist(data.body);
       setTracksData(data.body.tracks);
     };
