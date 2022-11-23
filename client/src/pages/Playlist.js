@@ -23,6 +23,8 @@ const Playlist = () => {
     const fetchData = async () => {
       const data = await getPlaylist(id);
       console.log(id);
+      console.log(data.body.tracks)
+      console.log(data.body.name)
       setPlaylist(data.body);
       setTracksData(data.body.tracks);
     };
