@@ -127,6 +127,28 @@ const getUserPlaylist = (id) => spotifyApi.getPlaylist(id).then(
   }
 );
 
+const getMoodPlaylist = async (mood) => {
+  try {
+    const queryParams = querystring.stringify({
+      mood
+    });
+    const { data } = await axios.get(`${SERVER_URI}/playlist?${queryParams}`);
+    let playlistId = data.playlistId;
+    console.log(playlistId)
+    window.location.href = `${FRONTEND_URI}/playlists/${playlistId}`;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const getCurrentUserPlaylists = () => spotifyApi.getUserPlaylists().then(
+  async function(data) {
+    return data;
+  }, function(err) {
+    console.log('Something went wrong!', err);
+  }
+);
+
 
 export const accessToken = getAccessToken();
 /**
