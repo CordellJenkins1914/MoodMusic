@@ -143,3 +143,6 @@ export const accessToken = getAccessToken();
 };
 
 export const getCurrentUserProfile = () => getUser();
+export const getPlaylists = () => getCurrentUserPlaylists();
+export const getPlaylist = (id) => getUserPlaylist(id);
+export const getMood = (mood) => getMoodPlaylist(mood);
