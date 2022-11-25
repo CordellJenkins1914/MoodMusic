@@ -65,7 +65,6 @@ const FRONTEND_URI = process.env.FRONTEND_URI;
       
       const queryParams = querystring.stringify({
         access_token,
-        refresh_token,
         expires_in,
       });
 

@@ -1,5 +1,6 @@
 import { React, useState } from 'react';
 import { Main, DropDownContainer, DropDownHeader, DropDownListContainer, DropDownList, ListItem } from '../styles';
+import { Loader } from '../components';
 import { getMood } from '../spotify';
 
 const options = ["happy", "sad", "angry", "excited"];
@@ -16,22 +17,28 @@ const Dropdown = () => {
     return (
         <Main>
           <h1>What's your mood</h1>
-          <DropDownContainer>
-            <DropDownHeader onClick={toggling}>
-              {selectedOption || "Mood"}
-            </DropDownHeader>
-            {isOpen && (
-              <DropDownListContainer>
-                <DropDownList>
-                  {options.map(option => (
-                    <ListItem onClick={onOptionClicked(option)} key={Math.random()}>
-                      {option}
-                    </ListItem>
-                  ))}
-                </DropDownList>
-              </DropDownListContainer>
-            )}
-          </DropDownContainer>
+          {!selectedOption ? (
+              <DropDownContainer>
+              <DropDownHeader onClick={toggling}>
+                {selectedOption || "Mood"}
+              </DropDownHeader>
+              {isOpen && (
+                <DropDownListContainer>
+                  <DropDownList>
+                    {options.map(option => (
+                      <ListItem onClick={onOptionClicked(option)} key={Math.random()}>
+                        {option}
+                      </ListItem>
+                    ))}
+                  </DropDownList>
+                </DropDownListContainer>
+              )}
+            </DropDownContainer>      
+            
+          ) : (
+            <Loader />
+          )}
+          
         </Main>
     );
 }

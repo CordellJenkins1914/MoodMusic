@@ -31,9 +31,9 @@ async function findMood(attributes) {
     let mood;
 
 	//valence
-    if (attributes.valence >= 0.5) {
+    if (attributes.valence >= 0.6) {
 		sentiment++
-	} else if (attributes.valence < .3) {
+	} else if (attributes.valence < .4) {
 		sentiment = sentiment - 10
 	} 
 	else if (attributes.valence >= .7) {
@@ -43,7 +43,7 @@ async function findMood(attributes) {
 		sentiment--
 	}
 	//energy
-	if (attributes.energy >= 0.5) {
+	if (attributes.energy >= 0.6) {
 		intensity = intensity + 2
 	} else if (attributes.energy >= .7){
 		intensity = intensity + 2
@@ -60,30 +60,33 @@ async function findMood(attributes) {
 		sentiment = sentiment + 2
 		intensity = intensity + 2
 	} else if(attributes.tempo < 120 && attributes.tempo >= 100){
-		intensity--
-		sentiment--
+		//intensity--
+		//sentiment--
 	}
-	else{
+	else if(attributes.tempo < 100 && attributes.tempo > 90){
 		sentiment = sentiment - 2
 		intensity = intensity - 2
+	}
+	else{
+		intensity = intensity - 4
 	}
 
 	//danceability
 	if (attributes.danceability >= 0.5) {
 		intensity++
-		sentiment++
+		//sentiment++
 	} else {
 		intensity--
-		sentiment--
+		//sentiment--
 	}
 	if (attributes.danceability >= .7) {
 		intensity++
-		sentiment++
+		//sentiment++
 	}
 	
 	if (attributes.danceability < .3) {
 		intensity--
-		sentiment--
+		//sentiment--
 	}
 	
 	//mode

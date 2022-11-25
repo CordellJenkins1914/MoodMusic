@@ -11,7 +11,6 @@ const SERVER_URI = process.env.REACT_APP_SERVER_URI;
 // Map for localStorage keys
 const LOCALSTORAGE_KEYS = {
   accessToken: 'spotify_access_token',
-  refreshToken: 'spotify_refresh_token',
   expireTime: 'spotify_token_expire_time',
   timestamp: 'spotify_token_timestamp',
 }
@@ -19,10 +18,24 @@ const LOCALSTORAGE_KEYS = {
 // Map to retrieve localStorage values
 const LOCALSTORAGE_VALUES = {
   accessToken: window.localStorage.getItem(LOCALSTORAGE_KEYS.accessToken),
-  refreshToken: window.localStorage.getItem(LOCALSTORAGE_KEYS.refreshToken),
   expireTime: window.localStorage.getItem(LOCALSTORAGE_KEYS.expireTime),
   timestamp: window.localStorage.getItem(LOCALSTORAGE_KEYS.timestamp),
 };
+
+  /**
+ * Clear out all localStorage items we've set and reload the page
+ * @returns {void}
+ */
+   const logoutUser = () => {
+    // Clear all localStorage items
+    console.log("remove storage");
+    for (const property in LOCALSTORAGE_KEYS) {
+      window.localStorage.removeItem(LOCALSTORAGE_KEYS[property]);
+    }
+    // Navigate to homepage
+    window.location = window.location.origin;
+  };
+  
 /**
  * Handles logic for retrieving the Spotify access token from localStorage
  * or URL query params
@@ -33,22 +46,27 @@ const getAccessToken = () => {
   const urlParams = new URLSearchParams(queryString);
   const queryParams = {
     [LOCALSTORAGE_KEYS.accessToken]: urlParams.get('access_token'),
-    [LOCALSTORAGE_KEYS.refreshToken]: urlParams.get('refresh_token'),
     [LOCALSTORAGE_KEYS.expireTime]: urlParams.get('expires_in'),
   };
   
   const hasError = urlParams.get('error');
   
-
     
 
   // If there's an error OR the token in localStorage has expired, refresh the token
   if (hasError || hasTokenExpired() || LOCALSTORAGE_VALUES.accessToken === 'undefined') {
     refreshToken();
+    console.log("it keeps refreshing");
+    if(LOCALSTORAGE_VALUES.accessToken === 'undefined' || !LOCALSTORAGE_VALUES.accessToken){
+      console.log("Try logging out");
+      logoutUser();
+      console.log("checking again. One more time");
+    }
   }
 
   // If there is a valid access token in localStorage, use that
   if (LOCALSTORAGE_VALUES.accessToken && LOCALSTORAGE_VALUES.accessToken !== 'undefined') {
+    console.log("valid access token in")
     spotifyApi.setAccessToken(LOCALSTORAGE_VALUES.accessToken);
     return LOCALSTORAGE_VALUES.accessToken;
   }
@@ -61,6 +79,7 @@ const getAccessToken = () => {
     }
     // Set timestamp
     window.localStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now());
+    console.log("Are we here?");
 
     spotifyApi.setAccessToken(queryParams[LOCALSTORAGE_KEYS.accessToken]);
 
@@ -97,18 +116,29 @@ const getAccessToken = () => {
  */
  const refreshToken = async () => {
   try {
+
+    /*if ((Date.now() - Number(LOCALSTORAGE_VALUES.timestamp) / 1000) < 1000) {
+      console.error('No refresh token available');
+      logout();
+    }*/
     // Use `/refresh_token` endpoint from our Node app
     const { data } = await axios.get(`${SERVER_URI}/refresh_token`);
 
     console.log(data.access_token);
+    console.log("changes");
 
-    // Update localStorage values
-    window.localStorage.setItem(LOCALSTORAGE_KEYS.accessToken, data.access_token);
-    window.localStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now());
-    spotifyApi.setAccessToken(data.access_token);
-    // Reload the page for localStorage updates to be reflected
-    window.location.reload();
-
+    if(data.access_token === "undefined"){
+      logoutUser();
+    }
+    else{
+        // Update localStorage values
+        window.localStorage.setItem(LOCALSTORAGE_KEYS.accessToken, data.access_token);
+        window.localStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now());
+        window.localStorage.setItem(LOCALSTORAGE_KEYS.expireTime, 3600);
+        spotifyApi.setAccessToken(data.access_token);
+        // Reload the page for localStorage updates to be reflected
+        window.location.reload();
+    }
   } catch (e) {
     console.error(e);
   }
@@ -164,20 +194,9 @@ function wait(ms){
 
 
 export const accessToken = getAccessToken();
-/**
- * Clear out all localStorage items we've set and reload the page
- * @returns {void}
- */
- export const logout = () => {
-  // Clear all localStorage items
-  for (const property in LOCALSTORAGE_KEYS) {
-    window.localStorage.removeItem(LOCALSTORAGE_KEYS[property]);
-  }
-  // Navigate to homepage
-  window.location = window.location.origin;
-};
 
 export const getCurrentUserProfile = () => getUser();
 export const getPlaylists = () => getCurrentUserPlaylists();
 export const getPlaylist = (id) => getUserPlaylist(id);
 export const getMood = (mood) => getMoodPlaylist(mood);
+export const logout = () => logoutUser();
