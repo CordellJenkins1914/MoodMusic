@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { StyledGrid } from '../styles';
 
 const PlaylistsGrid = ({ playlists = [] }) => {
-  if (playlists.length === 0) {
+  if (playlists.total === 0) {
     return <p className="empty-notice">No playlists available</p>;
   }
 
