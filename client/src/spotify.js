@@ -1,9 +1,6 @@
 import axios from "axios";
-import SpotifyWebApi from "spotify-web-api-node";
 import querystring from "querystring";
 
-var spotifyApi = new SpotifyWebApi({
-});
 
 const FRONTEND_URI = process.env.REACT_APP_FRONTEND_URI;
 const SERVER_URI = process.env.REACT_APP_SERVER_URI;
@@ -17,9 +14,9 @@ const LOCALSTORAGE_KEYS = {
 
 // Map to retrieve localStorage values
 const LOCALSTORAGE_VALUES = {
-  accessToken: window.localStorage.getItem(LOCALSTORAGE_KEYS.accessToken),
-  expireTime: window.localStorage.getItem(LOCALSTORAGE_KEYS.expireTime),
-  timestamp: window.localStorage.getItem(LOCALSTORAGE_KEYS.timestamp),
+  accessToken: sessionStorage.getItem(LOCALSTORAGE_KEYS.accessToken),
+  expireTime: sessionStorage.getItem(LOCALSTORAGE_KEYS.expireTime),
+  timestamp: sessionStorage.getItem(LOCALSTORAGE_KEYS.timestamp),
 };
 
   /**
@@ -30,7 +27,7 @@ const LOCALSTORAGE_VALUES = {
     // Clear all localStorage items
     console.log("remove storage");
     for (const property in LOCALSTORAGE_KEYS) {
-      window.localStorage.removeItem(LOCALSTORAGE_KEYS[property]);
+      sessionStorage.removeItem(LOCALSTORAGE_KEYS[property]);
     }
     // Navigate to homepage
     window.location = window.location.origin;
@@ -67,7 +64,6 @@ const getAccessToken = () => {
   // If there is a valid access token in localStorage, use that
   if (LOCALSTORAGE_VALUES.accessToken && LOCALSTORAGE_VALUES.accessToken !== 'undefined') {
     console.log("valid access token in")
-    spotifyApi.setAccessToken(LOCALSTORAGE_VALUES.accessToken);
     return LOCALSTORAGE_VALUES.accessToken;
   }
 
@@ -75,13 +71,12 @@ const getAccessToken = () => {
   if (queryParams[LOCALSTORAGE_KEYS.accessToken]) {
     // Store the query params in localStorage
     for (const property in queryParams) {
-      window.localStorage.setItem(property, queryParams[property]);
+      sessionStorage.setItem(property, queryParams[property]);
     }
     // Set timestamp
-    window.localStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now());
+    sessionStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now());
     console.log("Are we here?");
 
-    spotifyApi.setAccessToken(queryParams[LOCALSTORAGE_KEYS.accessToken]);
 
     window.location = window.location.origin;
     // Return access token from query params
@@ -115,13 +110,8 @@ const getAccessToken = () => {
  * @returns {void}
  */
  const refreshToken = async () => {
+  debugger;
   try {
-
-    /*if ((Date.now() - Number(LOCALSTORAGE_VALUES.timestamp) / 1000) < 1000) {
-      console.error('No refresh token available');
-      logout();
-    }*/
-    // Use `/refresh_token` endpoint from our Node app
     const { data } = await axios.get(`${SERVER_URI}/refresh_token`);
 
     console.log(data.access_token);
@@ -132,10 +122,9 @@ const getAccessToken = () => {
     }
     else{
         // Update localStorage values
-        window.localStorage.setItem(LOCALSTORAGE_KEYS.accessToken, data.access_token);
-        window.localStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now());
-        window.localStorage.setItem(LOCALSTORAGE_KEYS.expireTime, 3600);
-        spotifyApi.setAccessToken(data.access_token);
+        sessionStorage.setItem(LOCALSTORAGE_KEYS.accessToken, data.access_token);
+        sessionStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now());
+        sessionStorage.setItem(LOCALSTORAGE_KEYS.expireTime, 3600);
         // Reload the page for localStorage updates to be reflected
         window.location.reload();
     }
@@ -143,29 +132,13 @@ const getAccessToken = () => {
     console.error(e);
   }
 };
-const getUser = () => spotifyApi.getMe().then(
-  async function(data) {
-    console.log(FRONTEND_URI);
-      return data;
-    }, function(err) {
-    console.log('Something went wrong!', err);
-  }
-);
-
-const getUserPlaylist = (id) => spotifyApi.getPlaylist(id).then(
-  async function(data) {
-    return data;
-  }, function(err) {
-    console.log('Something went wrong!', err);
-  }
-);
 
 const getMoodPlaylist = async (mood) => {
   try {
     const queryParams = querystring.stringify({
       mood
     });
-    const { data } = await axios.get(`${SERVER_URI}/playlist?${queryParams}`);
+    const { data } = await axios.get(`${SERVER_URI}/moodplaylist?${queryParams}`);
     wait(1000);
     let playlistId = data.playlistId;
     console.log(playlistId);
@@ -175,14 +148,6 @@ const getMoodPlaylist = async (mood) => {
     console.error(e);
   }
 };
-
-const getCurrentUserPlaylists = () => spotifyApi.getUserPlaylists().then(
-  async function(data) {
-    return data;
-  }, function(err) {
-    console.log('Something went wrong!', err);
-  }
-);
 
 function wait(ms){
   var start = new Date().getTime();
@@ -194,9 +159,8 @@ function wait(ms){
 
 
 export const accessToken = getAccessToken();
-
-export const getCurrentUserProfile = () => getUser();
-export const getPlaylists = () => getCurrentUserPlaylists();
-export const getPlaylist = (id) => getUserPlaylist(id);
+export const getCurrentUserProfile = () => axios.get(`${SERVER_URI}/user`);
+export const getPlaylists = () =>  axios.get(`${SERVER_URI}/playlists`);
+export const getPlaylist = (id) => axios.get(`${SERVER_URI}/playlist?id=${id}`);
 export const getMood = (mood) => getMoodPlaylist(mood);
 export const logout = () => logoutUser();

@@ -55,27 +55,21 @@ const FRONTEND_URI = process.env.FRONTEND_URI;
     .authorizationCodeGrant(code)
     .then(data => {
 
-      const access_token = data.body['access_token'];
-      const refresh_token = data.body['refresh_token'];
-      const expires_in = data.body['expires_in'];
+      req.session.access_token = data.body['access_token'];
+      req.session.refresh_token = data.body['refresh_token'];
+      req.session.expires_in = data.body['expires_in'];
 
 
-      spotifyApi.setAccessToken(access_token);
-      spotifyApi.setRefreshToken(refresh_token);
+
+      spotifyApi.setAccessToken(req.session.access_token);
+      spotifyApi.setRefreshToken(req.session.refresh_token);
       
       const queryParams = querystring.stringify({
-        access_token,
-        expires_in,
+        access_token: req.session.access_token,
+        expires_in: req.session.expires_in,
       });
 
       res.redirect(`${FRONTEND_URI}/?${queryParams}`);
-
-      setInterval(async () => {
-        const data = await spotifyApi.refreshAccessToken();
-        const access_token = data.body['access_token'];
-        spotifyApi.setAccessToken(access_token);
-        
-      }, expires_in / 2 * 1000);
     })
     .catch(error => {
       console.error('Error getting Tokens:', error);
@@ -86,19 +80,23 @@ const FRONTEND_URI = process.env.FRONTEND_URI;
 
 router.get('/user', async (req, res) => {
     spotifyApi.getMe()
-        .then(async function(data) {
-            res.send(`<pre>${JSON.stringify(data.body, null, 2)}</pre>`);
-        }, function(err) {
-    console.log('Something went wrong!', err);
+    .then(
+      async function(data) {
+        res.send(data);
+      }, function(err) {
+        console.log('Something went wrong!', err);
+      }
+    );
   });
-});
 
-router.get('/refresh_token', (req, res) => {
+router.get('/refresh_token', async (req, res) => {
 
-  const access_token  = spotifyApi.getAccessToken();
+  const data = await spotifyApi.refreshAccessToken();
+  req.session.access_token = data.body['access_token'];
+  spotifyApi.setAccessToken(req.session.access_token);
 
   const responseData = {
-    access_token : access_token,
+    access_token : req.session.access_token,
 
   }
   const jsonContent = JSON.stringify(responseData);
@@ -107,7 +105,31 @@ router.get('/refresh_token', (req, res) => {
 
 });
 
+router.get('/playlists', async (req, res) => {
+
+  spotifyApi.getUserPlaylists().then(
+    async function(data) {
+      res.send(data);
+    }, function(err) {
+      console.log('Something went wrong!', err);
+    }
+  );
+});
+
 router.get('/playlist', async (req, res) => {
+
+  const id = req.query.id;
+  console.log(id);
+  spotifyApi.getPlaylist(id).then(
+    async function(data) {
+      res.send(data);
+    }, function(err) {
+      console.log('Something went wrong!', err);
+    }
+  );
+});
+
+router.get('/moodplaylist', async (req, res) => {
 
     let playlistId;
     let trackUris;

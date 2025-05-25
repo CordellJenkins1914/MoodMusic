@@ -15,11 +15,12 @@ const Profile = () => {
   useEffect(() => {
     if(accessToken){
       const fetchData = async () => {
-          const data  = await getCurrentUserProfile();
-          setProfile(data.body);
+          const user  = await getCurrentUserProfile();
+          setProfile(user.data.body);
+          console.log(user.data.body);
 
           const userPlaylists = await getPlaylists();
-          setPlaylists(userPlaylists.body);
+          setPlaylists(userPlaylists.data.body);
 
         } 
       catchErrors(fetchData());

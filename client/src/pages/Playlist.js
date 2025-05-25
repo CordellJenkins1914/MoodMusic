@@ -21,12 +21,12 @@ const Playlist = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getPlaylist(id);
+      const playlist = await getPlaylist(id);
       console.log(id);
-      console.log(data.body.tracks)
-      console.log(data.body)
-      setPlaylist(data.body);
-      setTracksData(data.body.tracks);
+      console.log(playlist.data.body.tracks)
+      console.log(playlist.data.body)
+      setPlaylist(playlist.data.body);
+      setTracksData(playlist.data.body.tracks);
     };
       catchErrors(fetchData());
   }, [id]);

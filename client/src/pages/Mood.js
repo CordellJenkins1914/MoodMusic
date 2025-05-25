@@ -10,8 +10,8 @@ const Mood = () => {
 
         useEffect(() => {
             const fetchData = async () => {
-                const data  = await getCurrentUserProfile();
-                setProfile(data.body);
+                const user  = await getCurrentUserProfile();
+                setProfile(user.data.body);
       
               } 
             catchErrors(fetchData()); 
