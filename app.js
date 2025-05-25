@@ -19,8 +19,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 // Priority serve any static files.
 application.use(cookieSession({
-	name:'session',
-	keys: [generateRandomString],
+	name: 'session',
+	keys: [generateRandomString(16)],
 
 	maxAge: 24 * 60 * 60 * 1000 //24 hours
 

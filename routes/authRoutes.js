@@ -10,21 +10,20 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI;
 const FRONTEND_URI = process.env.FRONTEND_URI;
 
-  const scopes = [
-    `user-modify-playback-state
-    user-read-playback-state
-    user-read-currently-playing
-    user-library-modify
-    user-library-read
-    user-top-read
-    playlist-read-private
-    playlist-modify-public
-    playlist-modify-private
-    streaming
-    user-read-email
-    user-read-private`
+const scopes = [
+  'user-modify-playback-state',
+  'user-read-playback-state',
+  'user-read-currently-playing',
+  'user-library-modify',
+  'user-library-read',
+  'user-top-read',
+  'playlist-read-private',
+  'playlist-modify-public',
+  'playlist-modify-private',
+  'streaming',
+  'user-read-email',
+  'user-read-private',
 ];
-
     const state = generateRandomString(16);
 
     var spotifyApi = new SpotifyWebApi({
@@ -33,7 +32,7 @@ const FRONTEND_URI = process.env.FRONTEND_URI;
         clientSecret: CLIENT_SECRET
     });
 
-    let authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
+    const authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
     console.log(authorizeURL);
 
 

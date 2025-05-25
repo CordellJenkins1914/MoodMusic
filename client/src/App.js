@@ -87,12 +87,9 @@ display: block;
           <Router>
             <ScrollToTop />
             <Routes>
-            <Route path="/mood" element={<Mood />}t>
-              </Route>
-              <Route path="/playlists/:id" element={<Playlist />}>
-              </Route>
-              <Route path="/playlists" element={<Playlists />}t>
-              </Route>
+            <Route path="/mood" element={<Mood />} />
+            <Route path="/playlists/:id" element={<Playlist />} />
+            <Route path="/playlists" element={<Playlists />} />
               <Route path="/" element={<Profile />}>
               </Route>
             </Routes>
